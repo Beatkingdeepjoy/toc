@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CS428 — Theory of Computation Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="scrim" id="scrim"></div>
+<div class="toast-host" id="toastHost"></div>
+
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-modal">
+    <div class="search-input-row">
+      <span class="ic" id="searchIconHost"></span>
+      <input type="text" id="searchInput" placeholder="Search definitions, quiz questions, flashcards…" autocomplete="off">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="code">CS428 / STUDIO</span>
+      <h1>Theory of&nbsp;Computation</h1>
+      <p>Notes, quizzes, simulator &amp; your progress</p>
+    </div>
+    <nav class="topics" id="navList"></nav>
+    <div class="sidebar-foot">
+      <button class="icon-btn" id="sidebarSearchBtn"></button>
+      <button class="icon-btn" id="themeToggle"></button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      <div class="crumbs" id="crumbs">HOME</div>
+      <div class="topbar-actions">
+        <div class="timer-pill" id="timerPill"><span class="ic" id="timerIconHost"></span><span id="timerText">0:00</span><span class="lbl">&nbsp;studied</span></div>
+        <button class="icon-btn" id="topSearchBtn"></button>
+      </div>
+    </div>
+    <div class="read-bar" id="readBar" style="display:none;"><div id="readBarFill"></div></div>
+
+    <!-- HOME VIEW -->
+    <section class="view" id="view-home">
+      <div class="plate hero-plate">
+        <span class="kicker">FULL SYLLABUS · 5 UNITS · SELF-PACED</span>
+        <h1>Master the theory before the exam masters you.</h1>
+        <p>Every definition, law and worked derivation from your course notes — reorganised into readable study sections, a much-improved automata simulator, flashcards, and a quiz bank that explains every answer. Your progress, quiz history and study time are all tracked in one place.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><b id="statTopics">5</b><span>UNITS COVERED</span></div>
+          <div class="hero-stat"><b id="statQ">0</b><span>QUIZ QUESTIONS</span></div>
+          <div class="hero-stat"><b id="statCards">0</b><span>FLASHCARDS</span></div>
+          <div class="hero-stat"><b id="statDone">0%</b><span>YOUR PROGRESS</span></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2>Units</h2>
+        <div class="topic-grid" id="topicGrid"></div>
+      </div>
+
+      <div class="section-block">
+        <h2>Practice &amp; tools</h2>
+        <div class="topic-grid" id="toolGrid"></div>
+      </div>
+    </section>
+
+    <!-- TOPIC VIEW -->
+    <section class="view" id="view-topic" hidden>
+      <div class="title-row">
+        <div>
+          <span class="eyebrow-num" id="topicEyebrow">01</span>
+          <h1 class="page-title" id="topicTitle"></h1>
+          <p class="page-sub" id="topicSub"></p>
+        </div>
+        <button class="star-toggle" id="topicStar" title="Bookmark this unit"></button>
+      </div>
+      <div class="subnav" id="topicSubnav"></div>
+      <div id="topicBody"></div>
+      <div class="quiz-nav-row">
+        <button class="btn ghost" id="topicPrev">Previous unit</button>
+        <button class="btn accent" id="topicQuizBtn">Take this unit's quiz</button>
+      </div>
+    </section>
+
+    <!-- QUIZ VIEW -->
+    <section class="view" id="view-quiz" hidden>
+      <span class="eyebrow-num">SELF-CHECK</span>
+      <h1 class="page-title">Quiz bank</h1>
+      <p class="page-sub">Pick a unit, race the clock in timed mode, or attempt the mixed mock test drawn from all five units.</p>
+
+      <div class="quiz-stage active" id="quizPickStage">
+        <div class="quiz-pick-grid" id="quizPickGrid"></div>
+      </div>
+
+      <div class="quiz-stage" id="quizRunStage">
+        <div class="quiz-progress-row">
+          <span class="count" id="quizName">—</span>
+          <div class="track"><div class="fill" id="quizFill"></div></div>
+          <span class="count" id="quizCount">0/0</span>
+          <span class="quiz-timer" id="quizTimerText"></span>
+        </div>
+        <div class="plate q-card">
+          <span class="qtag"><span id="qTag">QUESTION</span></span>
+          <h3 id="qText"></h3>
+          <div class="opt-list" id="qOpts"></div>
+          <div class="explain" id="qExplain"></div>
+        </div>
+        <div class="quiz-nav-row">
+          <button class="btn ghost" id="quizQuit">Exit quiz</button>
+          <button class="btn accent" id="quizNext" disabled>Next question</button>
+        </div>
+      </div>
+
+      <div class="quiz-stage" id="quizResultStage">
+        <div class="plate result-plate">
+          <span class="eyebrow-num" id="resultName" style="justify-content:center;">UNIT QUIZ</span>
+          <div class="score-num" id="resultScore">0/0</div>
+          <p id="resultMsg">Nice work.</p>
+          <div class="result-actions">
+            <button class="btn ghost" id="resultRetry">Retry</button>
+            <button class="btn accent" id="resultBack">Back to quiz bank</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLASHCARDS VIEW -->
+    <section class="view" id="view-flashcards" hidden>
+      <span class="eyebrow-num">REVIEW</span>
+      <h1 class="page-title">Flashcards</h1>
+      <p class="page-sub">Tap a card to flip it, then rate how well you knew it — cards you mark "review again" come back sooner.</p>
+      <div class="flash-toolbar">
+        <select id="flashUnitSelect"></select>
+        <button class="btn ghost sm" id="flashShuffle">Shuffle deck</button>
+        <button class="btn ghost sm" id="flashRestart">Restart deck</button>
+      </div>
+      <div class="flash-stage" id="flashStage"></div>
+    </section>
+
+    <!-- SIMULATOR VIEW -->
+    <section class="view" id="view-simulator" hidden>
+      <span class="eyebrow-num">05.4 · LIVE</span>
+      <h1 class="page-title">Automaton simulator</h1>
+      <p class="page-sub">Choose a machine, test it with quick example strings or your own, step through δ / δ̂ exactly as defined, reveal the subset-construction DFA — or build your own automaton from scratch.</p>
+
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tabPreset">Preset machines</button>
+        <button class="mode-tab" id="tabBuilder">Build your own</button>
+      </div>
+
+      <div id="builderPanel" class="plate" style="display:none; margin-bottom:20px;">
+        <div class="builder-grid">
+          <div class="field"><label>TYPE</label>
+            <select id="bType"><option value="NFA">NFA</option><option value="DFA">DFA</option></select>
+          </div>
+          <div class="field"><label>ALPHABET (comma separated)</label><input type="text" id="bAlphabet" value="0,1"></div>
+          <div class="field"><label>STATES (comma separated)</label><input type="text" id="bStates" value="q0,q1"></div>
+          <div class="field"><label>START STATE</label><input type="text" id="bStart" value="q0"></div>
+          <div class="field" style="grid-column:1/-1;"><label>ACCEPT STATES (comma separated)</label><input type="text" id="bAccept" value="q0"></div>
+          <div class="field" style="grid-column:1/-1;">
+            <label>TRANSITIONS — one per line: <span class="k">state,symbol-&gt;target1|target2</span></label>
+            <textarea id="bTrans">q0,0->q0
+q0,1->q1
+q1,0->q1
+q1,1->q0|q1</textarea>
+            <span class="builder-hint">For a DFA use exactly one target per line. Undefined (state,symbol) pairs are treated as dead/trap transitions.</span>
+          </div>
+        </div>
+        <div class="sim-btn-row" style="margin-top:12px;">
+          <button class="btn accent sm" id="bBuild">Build machine</button>
+          <span id="bError" style="color:var(--danger); font-size:12.5px;"></span>
+        </div>
+      </div>
+
+      <div class="sim-layout">
+        <div>
+          <div class="plate sim-diagram-plate">
+            <svg id="simSvg" viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="trace-row" id="simTrace"></div>
+          <div id="simResultBadge"></div>
+          <div class="trace-log" id="traceLog"></div>
+        </div>
+
+        <div class="sim-controls plate">
+          <div class="field" id="presetSelectField">
+            <label>MACHINE</label>
+            <select id="simMachine">
+              <option value="bin">Binary NFA — Σ={0,1} (Case 1, notes §5.4.1)</option>
+              <option value="ab">{a,b} NFA — 3 states (Case 2, notes §5.4.2)</option>
+              <option value="even0">Even number of 0s — DFA</option>
+              <option value="endsin01">Ends with "01" — DFA</option>
+              <option value="containsaba">Contains substring "aba" — NFA</option>
+            </select>
+          </div>
+          <div class="lang-desc" id="langDesc"></div>
+          <div class="field">
+            <label>INPUT STRING (Σ symbols only, leave blank for Λ)</label>
+            <input type="text" id="simInput" placeholder="e.g. 1011" value="1011">
+          </div>
+          <div class="quick-chips" id="quickChips"></div>
+          <div class="sim-btn-row">
+            <button class="btn accent" id="simRun">Run</button>
+            <button class="btn ghost" id="simStep">Step</button>
+            <button class="btn ghost" id="simReset">Reset</button>
+          </div>
+          <div class="speed-row">
+            <label style="font-size:12px;color:var(--ink-faint);font-family:var(--mono);white-space:nowrap;">SPEED</label>
+            <input type="range" id="simSpeed" min="150" max="1400" value="600" step="50">
+          </div>
+          <div class="field">
+            <label id="simActiveLabel">ACTIVE STATE(S)</label>
+            <div id="simActiveStates" class="formula">{ q0 }</div>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--line); margin:6px 0;">
+          <div class="field">
+            <label>SUBSET CONSTRUCTION → EQUIVALENT DFA</label>
+            <p style="font-size:12.5px;color:var(--ink-faint);margin:0 0 6px;">Work it out on paper first, then reveal.</p>
+            <div class="reveal-wrap blurred" id="dfaRevealWrap">
+              <button class="reveal-btn" id="dfaRevealBtn">Reveal DFA table</button>
+              <div id="dfaTableHost"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS / DATA VIEW -->
+    <section class="view" id="view-analytics" hidden>
+      <span class="eyebrow-num">YOUR DATA</span>
+      <h1 class="page-title">Progress &amp; analytics</h1>
+      <p class="page-sub">Every quiz attempt, simulator run and flashcard review you've done in this browser, tracked in one place. Nothing leaves your device.</p>
+
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="section-block">
+        <h2>Accuracy by unit</h2>
+        <div class="plate">
+          <div class="bars" id="unitBars"></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2>Recent activity</h2>
+        <div class="plate">
+          <div class="activity-list" id="activityList"></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2>Manage your data</h2>
+        <p style="color:var(--ink-soft); font-size:14px;">Export everything as a JSON file, or wipe your local progress and start fresh.</p>
+        <div class="data-actions">
+          <button class="btn ghost" id="exportDataBtn">Export data (.json)</button>
+          <button class="btn danger" id="resetDataBtn">Reset all data</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">CS428 Theory of Computation — Study Studio · built from course notes, August–September 2026 · all progress is stored locally in this browser only</footer>
+  </div>
+</div>
+  <script src="app.js"></script>
+</body>
+</html>
